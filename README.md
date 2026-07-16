@@ -8,7 +8,7 @@ authors:
 license: "GPL-3.0-or-later"
 ---
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
-[![Hits](https://hits.sh/github.com/abhogal-lab/WillisWorks.svg?style=flat-square&color=blue&label=views)](https://hits.sh/github.com/abhogal-lab/WillisWorks/)
+[![Hits](https://hits.sh/github.com/abhogal-lab/WillisWorks.svg?style=flat-square&color=blue&label=views)](https://hits.sh/github.com/abhogal-lab/WillisWorks/index.html)
 # WillisWorks
 
 ![logo.](img/logo.png)
