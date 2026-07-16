@@ -502,7 +502,7 @@ sinus network and does not model venous collateral channels [17,18].
 
 _All metabolic modes share Fick balance and the same arterial network, but differ in how extraction capacity and chronic demand are represented._
 
-![Figure 5. Shared oxygen cascade. CTH, shunt and endothelial/NVC settings alter exchange or flow demand before derived metrics are calculated.] (img/figure5.png)
+![Figure 5. Shared oxygen cascade. CTH, shunt and endothelial/NVC settings alter exchange or flow demand before derived metrics are calculated.](img/figure5.png)
 
 *Figure 5. Shared oxygen cascade (experimental modeling). CTH, shunt and endothelial/NVC settings alter exchange or flow demand before derived metrics are calculated.*
 
