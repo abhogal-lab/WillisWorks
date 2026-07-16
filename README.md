@@ -342,9 +342,9 @@ near Rmin, healthy donor beds may dilate more strongly and produce steal
 
 _Steal becomes prominent when additional vasodilatory demand approaches the flow reserve of the supplying ICA or basilar source._
 
-![Figure 4. Left: soft source-capacity knee. Right: acute pial collateral flow is split into an established component and a pressure-responsive component.](assets/figure-04-source-reserve-pial-model.png)
+![Figure 4. A vasoactive stimulus leads to vascular steal in the left territories due to competition for limited inflow supply.](assets/figure4.gif)
 
-*Figure 4. Left: soft source-capacity knee. Right: acute pial collateral flow is split into an established component and a pressure-responsive component.*
+*Figure 4. A vasoactive stimulus leads to vascular steal in the left territories due to competition for limited inflow supply.*
 
 ## Why finite source reserve was added
 With fixed-pressure sources and purely linear proximal resistance,
