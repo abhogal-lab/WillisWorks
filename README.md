@@ -15,6 +15,8 @@ license: "GPL-3.0-or-later"
 
 [![Launch WillisWorks](https://img.shields.io/badge/Launch-WillisWorks-16856d?style=for-the-badge)](https://abhogal-lab.github.io/WillisWorks/)
 
+[![Star me if you like me](https://img.shields.io/github/stars/abhogal-lab/WillisWorks?style=for-the-badge&logo=github&label=Star%20me%20if%20you%20like%20me&color=16856d)](https://github.com/abhogal-lab/WillisWorks)
+
 ## User and Physiological Model Manual
 
 **Version 1.0 · July 2026**  
