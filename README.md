@@ -10,6 +10,8 @@ license: "GPL-3.0-or-later"
 
 # WillisWorks
 
+![logo.](img/logo.png)
+
 ## User and Physiological Model Manual
 
 **Version 1.0 · July 2026**  
