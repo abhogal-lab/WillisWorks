@@ -344,7 +344,7 @@ near Rmin, healthy donor beds may dilate more strongly and produce steal
 
 _Steal becomes prominent when additional vasodilatory demand approaches the flow reserve of the supplying ICA or basilar source._
 
-![Figure 4. A vasoactive stimulus leads to vascular steal in the left territories due to competition for limited inflow supply.](img/figure4.gif)
+![Figure 4. A vasoactive stimulus leads to vascular steal in the left territories due exhausted reserve and competition for limited inflow supply.](img/figure4.gif)
 
 *Figure 4. A vasoactive stimulus leads to vascular steal in the left territories due to competition for limited inflow supply.*
 
@@ -373,8 +373,8 @@ us = max(Qs − Qrest,s, 0) / max(Qcap,s − Qrest,s, ε)
 Psource,effective = Psource − ΔPsource
 ```
 
-The pressure-droop request is 8·knee³ below the reference capacity and
-gains linear and quadratic terms after utilization exceeds 100%; droop
+The pressure-drop request is 8·knee³ below the reference capacity and
+gains linear and quadratic terms after utilization exceeds 100%; drop
 is capped at 78% of the available source-to-outflow pressure. This is a
 soft knee, not a hard flow clamp.
 
@@ -387,7 +387,7 @@ visible.
 
 ## Interpreting steal
 True modeled steal is a fall in territorial CBF relative to its own
-resting state during vasodilation elsewhere. It is most likely when the
+static resting state during vasodilation elsewhere. It is most likely when the
 recipient bed has little remaining dilation, depends on a limited
 collateral route, and shares a source whose acute reserve is being used.
 A complete occlusion is not necessarily the strongest steal state: some
@@ -502,9 +502,9 @@ sinus network and does not model venous collateral channels [17,18].
 
 _All metabolic modes share Fick balance and the same arterial network, but differ in how extraction capacity and chronic demand are represented._
 
-![Figure 5. Shared oxygen cascade in v21j. CTH, shunt and endothelial/NVC settings alter exchange or flow demand before derived metrics are calculated.](assets/figure-05-oxygen-exchange-model.png)
+![Figure 5. Shared oxygen cascade. CTH, shunt and endothelial/NVC settings alter exchange or flow demand before derived metrics are calculated.](img/figure5.png)
 
-*Figure 5. Shared oxygen cascade in v21j. CTH, shunt and endothelial/NVC settings alter exchange or flow demand before derived metrics are calculated.*
+*Figure 5. Shared oxygen cascade (experimental modeling). CTH, shunt and endothelial/NVC settings alter exchange or flow demand before derived metrics are calculated.*
 
 ## Arterial oxygen content and Fick balance
 The oxygen simulation derives arterial oxygen content from haemoglobin
@@ -707,7 +707,7 @@ _Controls are grouped by the mechanism they modify. Defaults and exact ranges ar
 | **MAP**                         | Changes arterial boundary pressure.                                      | Does not include systemic baroreflex or cardiac output.   |
 | **ICP, CVP and gradients**      | Change territory-specific effective outflow pressure.                    | Reduced venous/Starling abstraction, not a sinus network. |
 | **Proximal network resistance** | Scales native inlet and A1/M1/P1/terminal resistance.                    | Independent of CoW and pial controls.                     |
-| **Source flow reserve**         | Scales acute capacity above the current resting inflow.                  | Soft pressure-droop calibration, not measured Qmax.       |
+| **Source flow reserve**         | Scales acute capacity above the current resting inflow.                  | Soft pressure-drop calibration, not measured Qmax.       |
 | **Vascular compliance**         | Changes pulse damping, MAP lag and stiffness-associated active function. | Relative index, not physical compliance units.            |
 | **Vasodilatory capacity**       | Scales distance from reference resistance to Rmin.                       | 100% reproduces calibrated healthy capacity.              |
 | **Venous obstruction**          | Raises local venous outflow pressure.                                    | Location categories are simplified.                       |
@@ -859,9 +859,9 @@ universally normal.
 | **Systemic pulse pressure 40 mmHg; 1 Hz** | Teaching references                              | Provide a stable reference for relative distal pulse transmission.                            | No heart-rate or waveform control.                            |
 | **Stiffness couplings 20%, 18%, 30%**     | Heuristic empirical coupling                     | Separates passive damping from modest loss of active regulation/challenge capacity [14,15]. | Human associations are variable and confounded.               |
 | **Source headroom 1.75× healthy rest**    | WillisWorks calibration                          | Leaves substantial healthy reserve but permits capacity-limited steal at high demand [8].   | Not measured ICA or basilar maximum flow.                     |
-| **Soft knee at 65% acute reserve**        | Teaching calibration                             | Allows pressure droop to emerge before a hard capacity limit.                                 | Steal magnitude is sensitive to this knee.                    |
-| **Droop terms 8 / 35 / 60**               | Heuristic nonlinear mapping                      | Creates gradual pre-capacity and steep post-capacity pressure loss.                           | No direct vascular-pressure validation.                       |
-| **Droop cap 78%**                         | Numerical safeguard                              | Prevents source pressure from falling below a small margin above outflow pressure.            | Extreme states are clamp limited.                             |
+| **Soft knee at 65% acute reserve**        | Teaching calibration                             | Allows pressure drop to emerge before a hard capacity limit.                                 | Steal magnitude is sensitive to this knee.                    |
+| **drop terms 8 / 35 / 60**               | Heuristic nonlinear mapping                      | Creates gradual pre-capacity and steep post-capacity pressure loss.                           | No direct vascular-pressure validation.                       |
+| **drop cap 78%**                         | Numerical safeguard                              | Prevents source pressure from falling below a small margin above outflow pressure.            | Extreme states are clamp limited.                             |
 | **Proximal resistance default 100%**      | Neutral scale                                    | Preserves the calibrated healthy state; slider explores upstream pressure loss.               | Global scale cannot reproduce segment-specific geometry.      |
 
 ## A6. Circle of Willis, pial collaterals and bypass
@@ -999,7 +999,7 @@ _Definitions as used in WillisWorks._
 | **OEF**                     | Oxygen extraction fraction.                                                                                                         |
 | **PaCO₂**                   | Arterial carbon-dioxide partial pressure; unified challenge variable.                                                               |
 | **Pial collateral**         | Secondary leptomeningeal pathway between distal cortical arterial territories.                                                      |
-| **Source reserve**          | Additional acute inflow capacity above the current resting source flow before substantial pressure droop.                           |
+| **Source reserve**          | Additional acute inflow capacity above the current resting source flow before substantial pressure drop.                           |
 | **Steal**                   | A fall in a territory’s CBF during vasodilation elsewhere, usually because the recipient is exhausted and shared supply is limited. |
 | **VB territory**            | Left or right vertebrobasilar distal bed; represented numerically but not painted on the cortical brain map.                        |
 | **WillisWorks calibration** | A deliberate educational parameter selected for stability or interpretability rather than a universal physiological constant.       |
