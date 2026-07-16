@@ -344,7 +344,7 @@ near Rmin, healthy donor beds may dilate more strongly and produce steal
 
 _Steal becomes prominent when additional vasodilatory demand approaches the flow reserve of the supplying ICA or basilar source._
 
-![Figure 4. A vasoactive stimulus leads to vascular steal in the left territories due to competition for limited inflow supply.](assets/figure4.gif)
+![Figure 4. A vasoactive stimulus leads to vascular steal in the left territories due to competition for limited inflow supply.](img/figure4.gif)
 
 *Figure 4. A vasoactive stimulus leads to vascular steal in the left territories due to competition for limited inflow supply.*
 
