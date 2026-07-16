@@ -159,7 +159,7 @@ state; switching modes does not reset the model.
 
 _A steady lumped-parameter network with active distal resistance and separate oxygen/metabolic calculations._
 
-![Figure 2. Simplified topology. Arterial sources and communicating pathways are represented by resistances; each distal bed has a terminal connection and controllable tissue resistance.](img/figure2.gif)
+![Figure 2. Simplified topology. Arterial sources and communicating pathways are represented by resistances; each distal bed has a terminal connection and controllable tissue resistance.](img/figure2.png)
 
 *Figure 2. Simplified topology. Arterial sources and communicating pathways are represented by resistances; each distal bed has a terminal connection and controllable tissue resistance.*
 
@@ -212,8 +212,7 @@ system is solved for nodal pressures.
 **Core network equations**
 
 ```text
-Σj Gij(Pi − Pj) + Gi,source(Pi − Psource) + Gi,sink(Pi − Pout)
-= 0
+Σj Gij(Pi − Pj) + Gi,source(Pi − Psource) + Gi,sink(Pi − Pout)= 0
 Qterritory = k · max(Pdistal − Pout, 0) / Rtissue
 ```
 
@@ -259,7 +258,7 @@ Rlesion = Rviscous + Rjet
 
 _The healthy reference is a gently sloped CPP-based standard; territorial curves emerge from actual pressure loss, target flow and available resistance range._
 
-![Figure 3. Pressure-only autoregulatory reference profiles for each territory](img/figure3.png)
+![Figure 3. Pressure-only autoregulatory reference profiles for each territory](img/figure3.gif)
 
 *Figure 3. Pressure-only autoregulatory reference profiles for each territory.*
 
