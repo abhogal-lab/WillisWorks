@@ -1,6 +1,3 @@
-[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
-[![Hits](https://hits.sh/github.com/YourUser/seeVieweR.svg?style=flat-square&color=blue&label=views)](https://hits.sh/github.com/YourUser/seeVieweR/)
-
 ---
 title: "WillisWorks User and Physiological Model Manual"
 version: "1.0"
