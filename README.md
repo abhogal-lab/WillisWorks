@@ -128,11 +128,11 @@ _The interface is organized around interventions on the left, a visual map and s
 > **5.** Add CoW, leptomeningeal or bypass support one route at a time
 > and compare state A versus B.
 >
-> **6.** Open Staging to summarize the current state, then return to the
-> continuous numbers.
+> **6.** Open Staging to summarize the current state. Open Dynamics to inspect 
+> the autoregulatory compensation curve. Open Model to see quantitative outputs.
 >
-> **7.** Open Dynamics and independently select autoregulation, Suzuki,
-> stenosis or oxygen delivery. Autoregulation is the default.
+> **7.** A simulations tab below the brain provides a dynamic representation
+> of flow and oef changes in response to increasing hemodynamic burden.
 >
 > **8.** Run a time-resolved simulation only after understanding the
 > corresponding static state.
@@ -159,7 +159,7 @@ state; switching modes does not reset the model.
 
 _A steady lumped-parameter network with active distal resistance and separate oxygen/metabolic calculations._
 
-![Figure 2. Simplified topology. Arterial sources and communicating pathways are represented by resistances; each distal bed has a terminal connection and controllable tissue resistance.](assets/figure-02-model-architecture.png)
+![Figure 2. Simplified topology. Arterial sources and communicating pathways are represented by resistances; each distal bed has a terminal connection and controllable tissue resistance.](img/figure2.png)
 
 *Figure 2. Simplified topology. Arterial sources and communicating pathways are represented by resistances; each distal bed has a terminal connection and controllable tissue resistance.*
 
@@ -223,8 +223,7 @@ ICP 10 mmHg. Internal resistance values are therefore normalized model
 units rather than directly measured mmHg·min·100 g/mL.
 
 ## Territory-specific outflow pressure
-The older MAP−ICP approximation is generalized in v21j. A territory
-first receives a local ICP that may include lateral and posterior
+A territory first receives a local ICP that may include lateral and posterior
 gradients. Venous obstruction increases local effective venous pressure.
 The downstream pressure used for flow is the larger of the two,
 consistent with a simplified vascular-waterfall or Starling-resistor
@@ -260,9 +259,9 @@ Rlesion = Rviscous + Rjet
 
 _The healthy reference is a gently sloped CPP-based standard; territorial curves emerge from actual pressure loss, target flow and available resistance range._
 
-![Figure 3. Left: pressure-only reference profiles. Right: the unified sigmoidal PaCO₂ challenge centred at 38 mmHg.](assets/figure-03-autoregulation-co2.png)
+![Figure 3. Pressure-only autoregulatory reference profiles for each territory](img/figure3.png)
 
-*Figure 3. Left: pressure-only reference profiles. Right: the unified sigmoidal PaCO₂ challenge centred at 38 mmHg.*
+*Figure 3. Pressure-only autoregulatory reference profiles for each territory.*
 
 ## Healthy reference and pressure controller
 The familiar 60–150 mmHg MAP range is retained as a labeled healthy
@@ -294,7 +293,8 @@ The pressure-only reference is scaled by the flow required to support
 metabolic demand at a preferred OEF of 0.40. Neural activation increases
 both represented demand and a feed-forward flow request; NVC efficiency
 and endothelial function determine how strongly the flow component is
-expressed [9–12,21].
+expressed [9–12,21]. Parameters can be modified under the Advanced Model 
+controls (Oxygen, capillaries & neurovascular coupling).
 
 **Metabolic target implemented in v21j**
 
@@ -1031,9 +1031,8 @@ autoregulation dynamics in humans. Stroke. 1989;20:45–52.
 response to carbon dioxide in humans. J Physiol. 2011;589:3039–3048.
 [doi:10.1113/jphysiol.2011.206052](https://doi.org/10.1113/jphysiol.2011.206052).
 
-7. Fierstra J, Sobczyk O, Battisti-Charbonney A, et al. Measuring
-cerebrovascular reactivity: what stimulus to use? J Physiol.
-2013;591:5809–5821. [doi:10.1113/jphysiol.2013.259150](https://doi.org/10.1113/jphysiol.2013.259150).
+7. Bhogal AA, Siero JCW, Fisher JA, et al. Investigating the non-linearity of the BOLD cerebrovascular reactivity response to targeted hypo/hypercapnia at 7T. Neuroimage
+2014;98:296-305. [10.1016/j.neuroimage.2014.05.006](https://pubmed.ncbi.nlm.nih.gov/24830840/).
 
 8. Sobczyk O, Battisti-Charbonney A, Fierstra J, et al. A conceptual
 model for CO₂-induced redistribution of cerebral blood flow with
