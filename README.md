@@ -1,3 +1,6 @@
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+[![Hits](https://hits.sh/github.com/YourUser/seeVieweR.svg?style=flat-square&color=blue&label=views)](https://hits.sh/github.com/YourUser/seeVieweR/)
+
 ---
 title: "WillisWorks User and Physiological Model Manual"
 version: "1.0"
@@ -21,6 +24,8 @@ Software conceptualized by **Alex A. Bhogal** and **Markus Fahlström** with som
 WillisWorks is a transparent conceptual laboratory for exploring how arterial anatomy, pressure, resistance, collateral pathways, venous outflow, oxygen exchange, and metabolic demand interact. It is an educational model—not a medical device, patient-specific digital twin, or clinical decision system.
 
 **GPL-3.0-or-later · Browser-based · No patient data required**
+
+**WillisWorks is a work in progress. Parameters may still be optimized and outputs should not be considered as accurate representations of physiology. This is intended as a conceptual tool only**
 
 ## How to use this manual
 This document is both a user guide and a model specification. It follows
