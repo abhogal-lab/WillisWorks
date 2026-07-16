@@ -29,41 +29,7 @@ versus educational calibration.
 
 > **Code-fidelity note:** Numerical constants identified as calibrations or heuristics are listed in Appendix A rather than presented as universal physiological values.
 
-### Evidence labels used throughout
-|                                     |                                                                                                            |                                                                                               |
-|-------------------------------------|------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------|
-| **Label**                           | **Meaning**                                                                                                | **How to interpret it**                                                                       |
-| **Established principle**           | Direct use of a physical or physiological relation, such as flow from a pressure gradient or Fick balance. | Direction and structure are well supported; numerical implementation may still be simplified. |
-| **Literature-informed abstraction** | A recognized concept represented with a reduced equation or lumped parameter.                              | Appropriate for mechanism teaching, not a patient-specific conversion.                        |
-| **WillisWorks calibration**         | A chosen default, threshold, weight or curve anchor.                                                       | Selected for interpretability, stability or a recognizable teaching response.                 |
-| **Heuristic output**                | A derived index without a validated clinical threshold.                                                    | Use comparatively and never as a diagnosis or risk prediction.                                |
-
-### What changed since the previous manual
-- PaCO₂ is now the single bidirectional vasoactive challenge, with a
-  resting value of 38 mmHg and sigmoid constriction–dilation behavior.
-
-- Venous pressure, venous obstruction and spatial ICP gradients
-  contribute to territory-specific outflow pressure.
-
-- Haematocrit, apparent viscosity, representative vessel diameter and
-  path length modify resistance.
-
-- Capillary transit-time heterogeneity, shunt, neurovascular coupling,
-  endothelial function and a mitochondrial PO₂ proxy are included.
-
-- Finite source-flow reserve and a proximal-network-resistance control
-  allow capacity-limited redistribution and stronger steal.
-
-- Leptomeningeal conductance is recruited at rest and partly retained
-  during an acute challenge to remain predominantly protective.
-
-- Dynamics is selected independently of the active simulation and
-  defaults to the autoregulation view.
-
-- Tissue injury risk and neuronal function remain as passive heuristic
-  output metrics, without an embolic-injury control module.
-
-### Version scope
+### Model description
 The numerical model contains eight tissue beds: bilateral ACA, MCA, PCA
 and vertebrobasilar (VB) territories. The brain image paints six
 cortical territories; L VB and R VB are present in the Model, Staging,
@@ -141,9 +107,9 @@ angiography or clinical examination.
 
 _The interface is organized around interventions on the left, a visual map and simulations in the centre, and numerical interpretation on the right._
 
-![Figure 1. Functional organization of the v21j interface. The fixed-height right workspace prevents resizing when switching among Model, Staging and Dynamics.](assets/figure-01-interface-overview.png)
+![Figure 1. Organization of the interface. Output calculations are expressed in the Model, Staging and Dynamics tabs.](img/figure1.png)
 
-*Figure 1. Functional organization of the v21j interface. The fixed-height right workspace prevents resizing when switching among Model, Staging and Dynamics.*
+*Figure 1. Organization of the interface. Output calculations are expressed in the Model, Staging and Dynamics tabs.*
 
 ## A practical workflow
 > **1.** Start from Restore defaults. Confirm PaCO₂ 38 mmHg, MAP 90 mmHg
@@ -1183,4 +1149,3 @@ flow response to step changes in end-tidal PCO₂ and PO₂ in humans. J
 Appl Physiol. 1996;81:1084–1095. [doi:10.1152/jappl.1996.81.3.1084](https://doi.org/10.1152/jappl.1996.81.3.1084).
 
 *End of manual · WillisWorks v21j · July 2026*
-
