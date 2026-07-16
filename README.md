@@ -91,8 +91,8 @@ visible, testable and discussable.
 - Explore how source-flow reserve and proximal network resistance alter
   pressure redistribution.
 
-- Recognize that staging labels and derived injury/function metrics are
-  teaching summaries, not diagnostic classifications.
+- Recognize that staging labels are teaching summaries, not diagnostic
+  classifications.
 
 ## Intended users and intended use
 The simulator is intended for medical students, residents, radiologists,
@@ -103,7 +103,7 @@ treatment selection, perioperative blood-pressure targets, quantitative
 stroke-risk prediction, or replacement of measured perfusion, CVR, PET,
 angiography or clinical examination.
 
-> **Safe interpretation** Use the model to compare mechanisms and ask counterfactual questions. Do not infer that an individual patient shares the displayed absolute CBF, reserve, OEF, tissue-risk or neuronal-function value.
+> **Safe interpretation** Use the model to compare mechanisms and ask counterfactual questions. Do not infer that an individual patient shares the displayed absolute CBF, reserve or OEF value.
 
 # 2. Interface and recommended workflow
 
@@ -144,8 +144,8 @@ Teaching controls expose interventions that are easy to discuss
 anatomically: lesions, PaCO₂, communicating arteries, CoW variants,
 leptomeningeal pathways, bypass, metabolic interpretation and
 autoregulation. Advanced model exposes pressure, source reserve,
-compliance, venous physiology, rheology, geometry, oxygen exchange, NVC
-and chronic-adaptation parameters. Both modes modify the same underlying
+compliance, venous physiology, rheology, geometry, oxygen exchange and
+NVC parameters. Both modes modify the same underlying
 state; switching modes does not reset the model.
 
 ## Reset behavior
@@ -195,7 +195,7 @@ propagation, collateral transit-time dispersion or infarct topology.
 > pressure readouts.
 >
 > **5.** Calculate oxygen delivery, extraction, delivered metabolism,
-> CTH/shunt effects and derived indices.
+> CTH/shunt effects and the mitochondrial PO₂ proxy.
 >
 > **6.** Classify the state and update Model, Staging, Dynamics, map and
 > export objects.
@@ -500,7 +500,7 @@ sinus network and does not model venous collateral channels [17,18].
 
 # 9. Oxygen exchange, metabolism and neurovascular coupling
 
-_All metabolic modes share Fick balance and the same arterial network, but differ in how extraction capacity and chronic demand are represented._
+_Both metabolic modes share Fick balance and the same arterial network, but differ in how extraction capacity is represented._
 
 ![Figure 5. Shared oxygen cascade. CTH, shunt and endothelial/NVC settings alter exchange or flow demand before derived metrics are calculated.](img/figure5.png)
 
@@ -535,13 +535,12 @@ Effective OEFmax = OEFmax · CTH penalty · (1−0.55·shunt)
 Exchange flow = CBF · (1−shunt)
 ```
 
-## Three metabolic interpretations
+## Two metabolic interpretations
 |                            |                                                                                     |                                                                                |
 |----------------------------|-------------------------------------------------------------------------------------|--------------------------------------------------------------------------------|
 | **Model**                  | **Core rule**                                                                       | **Best use / caution**                                                         |
 | **Classic OEF ceiling**    | OEF rises to the effective selected ceiling; delivered CMRO₂ is delivery × OEF.     | Clear demonstration of compensated hypoperfusion and metabolic failure.        |
 | **Flow–diffusion reserve** | OEF = 1−exp(−D/flow); D is capped by a normalized diffusivity reserve.              | Shows that extraction depends on transport capacity [10–12].                 |
-| **Chronic adaptation**     | Represented demand is suppressed as low flow, low reserve and low pressure persist. | Hypothesis model only; not a tissue-viability or reversibility test [25,26]. |
 
 ## Mitochondrial PO₂ proxy
 The displayed mitochondrial PO₂ is a bounded teaching proxy derived from
@@ -595,9 +594,8 @@ intrinsically exhausted and donor dependent.
 | **Metabolic failure**         | Delivered CMRO₂ \<95% of represented demand.    | Selected extraction capacity cannot meet demand.                     |
 | **Hyperemic response**        | CBF \>57.                                       | Flow above the reference range; displayed as a positive green state. |
 
-In Chronic mode, suppression thresholds add mild, moderate and marked
-adaptation labels. All categorical boundaries are WillisWorks teaching
-rules and are not PET diagnostic cutoffs.
+All categorical boundaries are WillisWorks teaching rules and are not
+PET diagnostic cutoffs.
 
 **Stages are representative and are meant for teaching/visualization purposes only**
 
@@ -606,8 +604,8 @@ Dynamics is independent of the active simulation. The View dropdown
 selects Autoregulation curve, Suzuki progression, Steno-occlusive
 progression or Oxygen delivery. The Metric dropdown retains CBF, OEF,
 CMRO₂, intrinsic/available reserve, distal pressure, mitochondrial PO₂
-proxy, tissue injury risk and neuronal function. Full curves use 43
-samples and include the exact current operating point; a 17-point
+proxy. Full curves use 43 samples and include the exact current operating
+point; a 17-point
 preview is used while dragging.
 
 # 11. Hemodynamic simulations
@@ -682,7 +680,7 @@ _Controls are grouped by the mechanism they modify. Defaults and exact ranges ar
 | **Activate leptos**          | Adds recruited cortical pial links.                                    | Compare recipient rescue, donor burden and acute challenge response.        |
 | **Lepto pattern / strength** | Selects ipsilateral or transhemispheric links and functional capacity. | Treat as conductance, not angiographic collateral grade.                    |
 | **L/R EC–IC bypass**         | Adds an external distal pressure source.                               | Compare pre/post support; not a surgical-outcome predictor.                 |
-| **Metabolic model**          | Classic, Flow–diffusion or Chronic.                                    | Choose the oxygen-extraction interpretation.                                |
+| **Metabolic model**          | Classic or Flow–diffusion.                                             | Choose the oxygen-extraction interpretation.                                |
 | **Autoregulation**           | Enables or disables active distal resistance control.                  | Disable to demonstrate pressure-passive flow.                               |
 
 ## Advanced controls: pressure and circulation
@@ -708,7 +706,6 @@ _Controls are grouped by the mechanism they modify. Defaults and exact ranges ar
 | **CTH / shunt**                        | Reduce effective extraction and exchange flow.           | Reduced exchange penalties, not capillary-network simulation.     |
 | **Neural activation / NVC efficiency** | Separate demand and feed-forward flow components.        | Simplified whole-territory NVC.                                   |
 | **Endothelial function**               | Attenuates CO₂ reactivity, NVC and challenge efficiency. | Aggregate functional index.                                       |
-| **Chronic controls**                   | Set onset, maximum suppression and normalized exposure.  | Hypothesis model only.                                            |
 
 ## Display, comparison and export
 |                                |                                                                                            |
@@ -718,7 +715,7 @@ _Controls are grouped by the mechanism they modify. Defaults and exact ranges ar
 | **Preset state**               | Loads a complete teaching state; manual edits change it to Custom.                         |
 | **Model / Staging / Dynamics** | Switches fixed-height right-panel representations.                                         |
 | **Dynamics View**              | Selects autoregulation, Suzuki, stenosis or oxygen series independently of the simulation. |
-| **Dynamics Metric**            | Selects CBF, OEF, CMRO₂, reserve, pressure or derived indices.                             |
+| **Dynamics Metric**            | Selects CBF, OEF, CMRO₂, reserve, pressure or mitochondrial PO₂ proxy.                    |
 | **Save state A / B**           | Stores two current states in browser memory for comparison.                                |
 | **PNG / CSV / JSON**           | Exports the map, territorial results or full parameter/result object.                      |
 
@@ -869,19 +866,14 @@ universally normal.
 | **NVC demand +25%; flow +30%**                   | Literature-informed teaching amplitudes | Separates metabolic and feed-forward vascular components [21].                                | Whole-territory activation is simplified.                |
 | **Endothelial function as common multiplier**    | Mechanistic abstraction                 | Provides a shared vascular-response impairment across CO₂ and NVC.                              | Endothelial pathways are not identical across stimuli.   |
 
-## A8. Chronic mode, staging and derived indices
+## A8. Staging rules
 |                                             |                             |                                                                                     |                                                           |
 |---------------------------------------------|-----------------------------|-------------------------------------------------------------------------------------|-----------------------------------------------------------|
 | **Implementation**                          | **Status**                  | **Why chosen / link to physiology**                                                 | **Limit or sensitivity**                                  |
-| **Chronic onset CBF 40**                    | Heuristic threshold         | Starts adaptation before profound flow failure.                                     | Not a viability threshold.                                |
-| **Burden weights .45/.35/.20**              | Heuristic                   | Prioritizes flow, then reserve and pressure.                                        | Relative weights are not validated.                       |
-| **Maximum suppression 35%; chronicity 70%** | Teaching defaults           | Produces visible but bounded adaptation.                                            | Normalized exposure is not elapsed time.                  |
 | **Stage CBF 45 and hyperemia 57**           | Teaching rules              | Create readable low/high-flow categories around 50.                                 | Small changes can cross labels without abrupt physiology. |
 | **Reserve thresholds .55 and .18**          | Teaching rules              | Separate early reserve use from near exhaustion.                                    | Not PET or clinical CVR cutoffs.                          |
 | **Stage-II OEF +0.08**                      | Literature-inspired rule    | Represents increased extraction in hemodynamic failure [25,26].                   | Not a quantitative O-15 PET diagnostic criterion.         |
 | **CMRO₂ failure \<95% demand**              | Teaching rule               | Flags inability to meet represented demand.                                         | No tissue-injury validation.                              |
-| **Fixed injury horizon 60 min**             | Heuristic output assumption | Keeps tissue-risk and neuronal-function metrics available without an injury module. | Not a patient-specific time-to-infarction model.          |
-| **Injury/function weights and τ**           | Heuristic                   | Create monotonic worsening with flow and energy stress.                             | Use only for relative visualization.                      |
 
 ## A9. Simulation and visualization choices
 |                                               |                                          |                                                                                                |                                                    |
@@ -889,7 +881,7 @@ universally normal.
 | **Implementation**                            | **Status**                               | **Why chosen / link to physiology**                                                            | **Limit or sensitivity**                           |
 | **Suzuki anchor values**                      | Literature-informed teaching calibration | Reproduces increasing ICA/branch disease, peak basal channels and later ECA support [27–29]. | No progression rate or prognosis.                  |
 | **Stenosis simulation to 98%**                | Teaching endpoint                        | Approaches severe disease without singular occlusion.                                          | Depends on lesion mapping.                         |
-| **Collateral adaptation trajectory**          | Simulation-specific heuristic            | Demonstrates compensation during progressive disease.                                          | Not the removed chronic remodeling control.        |
+| **Collateral adaptation trajectory**          | Simulation-specific heuristic            | Demonstrates compensation during progressive disease.                                          | Not a biological remodeling law.                   |
 | **Playback 12/24/40 s**                       | Interface choice                         | Supports teaching and observation.                                                             | No biological time meaning.                        |
 | **43-point full /17-point preview curves**    | Performance choice                       | Maintains smooth final curves and responsive interaction.                                      | Preview is temporarily lower resolution.           |
 | **Six painted / eight numerical territories** | Visualization compromise                 | Preserves established brain graphic while retaining VB physiology numerically.                 | VB changes are not visible on the brain map.       |
@@ -925,9 +917,6 @@ _Startup settings in the v21j code. Percentages are relative model scales unless
 | **Neural activation**           | 0           | 0–100               | %                |
 | **NVC efficiency**              | 100         | 0–150               | %                |
 | **Endothelial function**        | 100         | 0–100               | %                |
-| **Chronic onset CBF**           | 40          | 30–50               | mL/100 g/min     |
-| **Maximum suppression**         | 35          | 0–50                | %                |
-| **Chronicity**                  | 70          | 0–100               | normalized %     |
 
 ## B2. Anatomy and support
 |                             |             |                                                                                   |
@@ -943,7 +932,7 @@ _Startup settings in the v21j code. Percentages are relative model scales unless
 | **Lepto strength**          | 65%         | 0–100%                                                                            |
 | **L/R EC–IC bypass**        | Off         | Off/on                                                                            |
 | **Bypass potency**          | 100%        | 0–100%                                                                            |
-| **Metabolic model**         | Classic     | Classic; Flow–diffusion; Chronic                                                  |
+| **Metabolic model**         | Classic     | Classic; Flow–diffusion                                                           |
 | **Autoregulation**          | On          | On/off                                                                            |
 
 ## B3. Simulation defaults
@@ -956,7 +945,6 @@ _Startup settings in the v21j code. Percentages are relative model scales unless
 | **Stenosis**               | Left M1; collateral adaptation 65%; endpoint 98%.                                |
 | **Oxygen**                 | Normal; anaemia target Hb 8 g/dL; hypoxaemia target SaO₂ 80%; demand target 4.0. |
 | **Dynamics**               | Autoregulation view; metric selected independently.                              |
-| **Derived injury outputs** | Fixed illustrative exposure horizon 60 min.                                      |
 
 # Appendix C: Glossary
 
