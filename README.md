@@ -159,7 +159,7 @@ state; switching modes does not reset the model.
 
 _A steady lumped-parameter network with active distal resistance and separate oxygen/metabolic calculations._
 
-![Figure 2. Simplified topology. Arterial sources and communicating pathways are represented by resistances; each distal bed has a terminal connection and controllable tissue resistance.](img/figure2.png)
+![Figure 2. Simplified topology. Arterial sources and communicating pathways are represented by resistances; each distal bed has a terminal connection and controllable tissue resistance.](img/figure2.gif)
 
 *Figure 2. Simplified topology. Arterial sources and communicating pathways are represented by resistances; each distal bed has a terminal connection and controllable tissue resistance.*
 
