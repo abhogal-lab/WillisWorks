@@ -744,12 +744,6 @@ _A plausible output is a model prediction under its assumptions, not evidence th
 >
 > **6.** Use A/B comparison and change one mechanism at a time.
 
-## Performance design
-Expensive curve calculations are generated only when their panel is
-visible. Slider movement uses throttled low-resolution previews,
-followed immediately by a full calculation on release. Source
-decomposition and challenge histories are calculated lazily. These
-choices improve interaction but do not change the equilibrium equations.
 
 ## Major limitations
 - No patient-specific vessel geometry, measured flow boundary conditions
@@ -832,7 +826,7 @@ universally normal.
 | **Hypertension CPP 70/100/165** | Literature-informed calibration | Represents a right-shifted operating range described in severe hypertension [4].        | Not a universal chronic-hypertension profile.                        |
 | **Impaired efficiency 0.28**    | Teaching calibration            | Produces a visibly pressure-passive but not completely unregulated curve.                 | No direct clinical conversion.                                       |
 | **Preferred OEF 0.40**          | Literature-informed abstraction | Links demand and content to flow through Fick balance [9–12].                           | Regional OEF varies.                                                 |
-| **Target-flow clamp 35–95**     | Numerical/teaching bound        | Prevents unlimited metabolic flow request while allowing strong NVC/hypoxic compensation. | Current code uses 95; older manual text stated 75.                   |
+| **Target-flow clamp 35–95**     | Numerical/teaching bound        | Prevents unlimited metabolic flow request while allowing strong NVC/hypoxic compensation. | Current code uses 95;                  |
 | **CO₂ midpoint 38, slope 6**    | Literature-informed calibration | Produces a human-like sigmoid with bounded hypocapnic and hypercapnic limbs [6–8].      | Not fit to a specific subject or gas-delivery protocol.              |
 | **Raw CO₂ range 0.55–1.45**     | WillisWorks calibration         | Allows substantial constriction/dilation while remaining bounded.                         | Absolute CVR depends on endothelial, stiffness and reserve settings. |
 
@@ -1058,7 +1052,7 @@ hypercapnia and arterial stiffness. Front Physiol. 2014;5:49.
 
 16. Pries AR, Secomb TW, Gaehtgens P. Biophysical aspects of blood flow
 in the microvasculature. Cardiovasc Res. 1996;32:654–667.
-[doi:10.1016/0008-6363(96)00065-X](https://doi.org/10.1016/0008-6363(96)00065-X).
+(https://pubmed.ncbi.nlm.nih.gov/8915184/).
 
 17. Ursino M, Lodi CA. A simple mathematical model of the interaction
 between intracranial pressure and cerebral hemodynamics. J Appl Physiol.
@@ -1079,7 +1073,7 @@ glucose. J Cereb Blood Flow Metab. 2015;35:806–817. [PMID:25669911](https://pu
 
 21. Iadecola C. The neurovascular unit coming of age: a journey through
 neurovascular coupling in health and disease. Neuron. 2017;96:17–42.
-[doi:10.1016/j.neuron.2017.07.030](https://doi.org/10.1016/j.neuron.2017.07.030).
+(https://pubmed.ncbi.nlm.nih.gov/28957666/).
 
 22. Liebeskind DS. Collateral circulation. Stroke. 2003;34:2279–2284.
 [doi:10.1161/01.STR.0000086465.41263.06](https://doi.org/10.1161/01.STR.0000086465.41263.06).
