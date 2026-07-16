@@ -297,7 +297,7 @@ and endothelial function determine how strongly the flow component is
 expressed [9–12,21]. Parameters can be modified under the Advanced Model 
 controls (Oxygen, capillaries & neurovascular coupling).
 
-**Metabolic target implemented in v21j**
+**Metabolic targeting**
 
 ```text
 Demand scale = 1 + 0.25 · neural activation
@@ -454,7 +454,7 @@ support, not a graft-flow or surgical-outcome calculation [30].
 
 # 8. Rheology, geometry and venous physiology
 
-_Resistance is allowed to vary with haematocrit, apparent viscosity, representative diameter, path length and outflow pressure._
+_Resistance is allowed to vary with haematocrit, apparent viscosity, representative diameter, path length and outflow pressure (experimental modeling)._
 
 ## Haematocrit and apparent viscosity
 Large-vessel viscosity is represented by a normalized
@@ -502,7 +502,7 @@ sinus network and does not model venous collateral channels [17,18].
 
 _All metabolic modes share Fick balance and the same arterial network, but differ in how extraction capacity and chronic demand are represented._
 
-![Figure 5. Shared oxygen cascade. CTH, shunt and endothelial/NVC settings alter exchange or flow demand before derived metrics are calculated.](img/figure5.png)
+![Figure 5. Shared oxygen cascade. CTH, shunt and endothelial/NVC settings alter exchange or flow demand before derived metrics are calculated.] (img/figure5.png)
 
 *Figure 5. Shared oxygen cascade (experimental modeling). CTH, shunt and endothelial/NVC settings alter exchange or flow demand before derived metrics are calculated.*
 
@@ -599,6 +599,8 @@ In Chronic mode, suppression thresholds add mild, moderate and marked
 adaptation labels. All categorical boundaries are WillisWorks teaching
 rules and are not PET diagnostic cutoffs.
 
+**Stages are representative and are meant for teaching/visualization purposes only**
+
 ## Dynamics
 Dynamics is independent of the active simulation. The View dropdown
 selects Autoregulation curve, Suzuki progression, Steno-occlusive
@@ -607,23 +609,6 @@ CMRO₂, intrinsic/available reserve, distal pressure, mitochondrial PO₂
 proxy, tissue injury risk and neuronal function. Full curves use 43
 samples and include the exact current operating point; a 17-point
 preview is used while dragging.
-
-## Passive tissue injury and neuronal-function indices
-These outputs remain available without an embolic or injury-control
-section. They use a fixed illustrative 60-minute exposure horizon and
-combine relative flow and delivered-energy stress. They are deliberately
-heuristic and do not represent infarct core, penumbra, tissue fate or
-clinical disability.
-
-**Passive derived indices**
-
-```text
-Acute stress = 0.58·flow stress + 0.42·energy stress
-Severity = 0.65·flow stress + 0.35·energy stress
-τinjury = clamp(240 − 205·severity, 20, 240) min
-Risk = acute stress · [1 − exp(−60/τinjury)]
-Neuronal function = 1 − 0.35·acute stress − 0.75·risk
-```
 
 # 11. Hemodynamic simulations
 
@@ -636,7 +621,7 @@ Timeline metrics are stored as the trajectory advances. Dynamics remains
 user selected and is no longer forced to follow the active simulation.
 
 ## Suzuki progression
-![Figure 6. Normalized Suzuki anchor functions. Continuous trajectories interpolate between these grade anchors.](assets/figure-06-suzuki-progression.png)
+![Figure 6. Normalized Suzuki anchor functions. Continuous trajectories interpolate between these grade anchors.](img/figure06_low.gif)
 
 *Figure 6. Normalized Suzuki anchor functions. Continuous trajectories interpolate between these grade anchors.*
 
