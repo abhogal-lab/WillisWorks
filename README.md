@@ -621,7 +621,7 @@ Timeline metrics are stored as the trajectory advances. Dynamics remains
 user selected and is no longer forced to follow the active simulation.
 
 ## Suzuki progression
-![Figure 6. Normalized Suzuki anchor functions. Continuous trajectories interpolate between these grade anchors.](img/figure06_low.gif)
+![Figure 6. Normalized Suzuki anchor functions. Continuous trajectories interpolate between these grade anchors.](img/figure6_low.gif)
 
 *Figure 6. Normalized Suzuki anchor functions. Continuous trajectories interpolate between these grade anchors.*
 
