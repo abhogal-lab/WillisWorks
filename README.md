@@ -279,9 +279,12 @@ _The healthy reference is a gently sloped CPP-based standard; territorial curves
 *Figure 3. Pressure-only autoregulatory reference profiles for each territory.*
 
 ## Healthy reference and pressure controller
-The familiar 60–150 mmHg MAP range is retained as a labeled healthy
-reference at ICP 10 mmHg. It is expressed internally in CPP space and
-has a gentle slope rather than a perfectly horizontal plateau [1–3].
+The familiar 60–150 mmHg MAP range is retained as a fixed healthy
+reference at ICP 10 mmHg. The grey reference is calculated from the
+standard reference state and does not move with the current lesion,
+PaCO₂, ICP, metabolic or simulation settings. It is expressed internally
+in CPP space and has a gentle slope rather than a perfectly horizontal
+plateau [1–3].
 
 |                               |          |                   |         |
 |-------------------------------|----------|-------------------|---------|
@@ -293,7 +296,11 @@ has a gentle slope rather than a perfectly horizontal plateau [1–3].
 For each territory, the controller calculates the resistance required to
 reach its current target flow and moves from the reference resistance
 toward that value. The result is constrained by calibrated minimum and
-maximum resistance.
+maximum resistance. The territorial pressure target continues with the
+same gentle slope above the upper reference point rather than switching
+to a pressure-proportional branch at CPP 140 mmHg. The actual lower and
+upper pressure-passive limbs therefore emerge when the required
+resistance reaches Rmin or Rmax.
 
 **Territorial autoregulation**
 
@@ -301,7 +308,14 @@ maximum resistance.
 Rrequired = (Pdistal − Pout) / (CBFtarget / k)
 Rcontroller = Rreference + EAR(Rrequired − Rreference)
 Rarteriole = clamp(Rcontroller, Rmin, Rmax)
+Pressure-passive limb begins when Rrequired lies outside [Rmin, Rmax]
 ```
+
+At the symmetric normal baseline, the calibrated territorial curves
+overlap the fixed grey reference, including the low- and high-pressure
+tails. Stenosis, collateral support, PaCO₂, outflow pressure, compliance
+and metabolic demand can then alter the territorial curves without
+moving the reference itself.
 
 ## Metabolic and NVC flow target
 The pressure-only reference is scaled by the flow required to support
@@ -337,18 +351,23 @@ Fraw = 0.55 + 0.90S
 FCO₂ = Fraw / Fraw(38)
 Tone request = (FCO₂ − 1) · endothelial function · stiffness
 efficiency
+CBFtarget,acute = CBFtarget · (1 + Tone request)
 ```
 
-PaCO₂ above 38 mmHg lowers resistance toward Rmin; PaCO₂ below 38 mmHg
-raises resistance toward Rmax. In a pressure-limited bed that is already
-near Rmin, healthy donor beds may dilate more strongly and produce steal
-[8].
+Hypercapnia raises the acute flow target, shifts the attainable maximum
+resistance toward Rmin and weakens constrictor-side controller gain.
+This allows the upper pressure limit to move or become more
+pressure-passive instead of remaining fixed near MAP 150 mmHg.
+Hypocapnia lowers the acute flow target and shifts the attainable minimum
+resistance toward Rmax. In a pressure-limited bed that is already near
+its dilatory limit, stronger donor-bed dilation and finite source reserve
+may produce steal [8].
 
 ## Profiles and compliance
 |                             |                                                                                |                                                                                         |
 |-----------------------------|--------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------|
 | **Setting**                 | **Implementation**                                                             | **Interpretation**                                                                      |
-| **Normal autoregulation**   | Normal CPP reference, full controller efficiency.                              | Symmetric default curves overlap the grey healthy reference.                            |
+| **Normal autoregulation**   | Normal CPP target, calibrated Rmin/Rmax and full controller efficiency; the grey reference remains fixed. | Symmetric default curves overlap the grey healthy reference.                            |
 | **Chronic hypertension**    | CPP reference points 70/100/165 mmHg.                                          | Literature-informed right shift; not patient-specific [4].                            |
 | **Impaired autoregulation** | Controller efficiency 0.28.                                                    | More pressure-passive, sloped response.                                                 |
 | **Autoregulation off**      | Controller efficiency 0 and fixed active resistance.                           | Demonstrates pressure-passive flow.                                                     |
@@ -489,20 +508,27 @@ is a representative global calibre control, not a literal uniform change
 in every vessel.
 
 ## Compliance-dependent calibre
-A small pressure strain changes representative diameter as MAP moves
-from 90 mmHg. The strain is attenuated by the stiffness index and
-clamped to prevent extreme geometry. This creates a modest static
-wall-mechanics effect without a full pressure–area or viscoelastic
-model.
+A small pressure strain changes representative diameter as systemic CPP
+moves away from the healthy calibration point of 80 mmHg. When
+autoregulation is active, the CPP used for this passive geometry term is
+bounded by the lower and upper reference points of the selected profile.
+This prevents pressure-dependent calibre from creating an additional
+second tail after the active resistance limits have already been
+reached. With autoregulation off, the unbounded current CPP is used.
 
 **Pressure-dependent calibre**
 
 ```text
-Strain = 0.035 · compliance · (MAP−90)/50 ·
+CPPeffective = clamp(CPP, CPPlower, CPPupper), when autoregulation is on
+Strain = 0.035 · compliance · (CPPeffective−80)/50 ·
 (1−0.65·stiffness)
 Diameter multiplier is clamped to 0.60–1.45; path length to
 0.60–1.80
 ```
+
+The strain is attenuated by stiffness and remains a modest static
+wall-mechanics effect rather than a full pressure–area or viscoelastic
+model.
 
 ## Venous obstruction and spatial ICP
 CVP is normally below ICP and therefore may not set the effective
@@ -614,13 +640,15 @@ PET diagnostic cutoffs.
 **Stages are representative and are meant for teaching/visualization purposes only**
 
 ## Dynamics
-Dynamics is independent of the active simulation. The View dropdown
-selects Autoregulation curve, Suzuki progression, Steno-occlusive
-progression or Oxygen delivery. The Metric dropdown retains CBF, OEF,
+Dynamics is normally independent of the active simulation. The View
+dropdown selects Autoregulation curve, Suzuki progression,
+Steno-occlusive progression or Oxygen delivery. Selecting the Blood
+pressure & autoregulation simulation automatically opens the Dynamics
+panel with the Autoregulation curve as the initial view; the user can
+subsequently select another view. The Metric dropdown retains CBF, OEF,
 CMRO₂, intrinsic/available reserve, distal pressure, mitochondrial PO₂
 proxy. Full curves use 43 samples and include the exact current operating
-point; a 17-point
-preview is used while dragging.
+point; a 17-point preview is used while dragging.
 
 # 11. Hemodynamic simulations
 
@@ -629,8 +657,10 @@ _Time-resolved demonstrations built from the same static network. Playback time 
 ## General behavior
 Run advances the selected trajectory; Reset returns it to the start; Off
 removes its modifiers. The progress slider allows manual inspection.
-Timeline metrics are stored as the trajectory advances. Dynamics remains
-user selected and is no longer forced to follow the active simulation.
+Timeline metrics are stored as the trajectory advances. Dynamics
+normally remains user selected; choosing Blood pressure & autoregulation
+opens the Autoregulation curve once as the most relevant starting view
+but does not lock the user to it.
 
 ## Suzuki progression
 ![Figure 6. Normalized Suzuki anchor functions. Continuous trajectories interpolate between these grade anchors.](img/figure6_low.gif)
@@ -649,12 +679,13 @@ component.
 
 ## Blood pressure and autoregulation
 Select Normal, Chronic hypertension or Impaired autoregulation and
-specify start/end MAP. Commanded MAP is transmitted through a
-compliance-dependent first-order lag: τ = 0.55 + 1.65·relative
-compliance seconds. At each step the complete pressure network and
-resistance controller are solved. The same equilibrium law is used in
-both directions; the lag provides history but not a full dynamic
-autoregulation model [1,5].
+specify start/end MAP. Selecting this simulation automatically opens
+Dynamics with the Autoregulation curve displayed. Commanded MAP is
+transmitted through a compliance-dependent first-order lag:
+τ = 0.55 + 1.65·relative compliance seconds. At each step the complete
+pressure network and resistance controller are solved. The same
+equilibrium law is used in both directions; the lag provides history but
+not a full dynamic autoregulation model [1,5].
 
 ## Steno-occlusive progression
 Progress raises the selected M1, ICA or tandem lesion smoothly toward
@@ -825,21 +856,22 @@ universally normal.
 | **Jet term with cap 85**              | Reduced-order heuristic                  | Adds flow-separation/inertial loss and prevents overflow.                      | No lesion length, eccentricity or Reynolds-number calculation.     |
 | **R∝μL/D⁴**                           | Established relation used as abstraction | Preserves the dominant geometry dependence of laminar tube flow.               | Cerebral networks are branching, compliant and nonuniform.         |
 | **38-μm representative microvessel**  | Teaching calibration                     | Places the apparent-viscosity function in a small-vessel regime [16].        | One diameter cannot represent arterioles, capillaries and venules. |
-| **Pressure strain coefficient 0.035** | Heuristic wall-mechanics coupling        | Adds modest pressure-dependent calibre without overwhelming active resistance. | Not a measured pressure–area curve.                                |
+| **Pressure strain coefficient 0.035** | Heuristic wall-mechanics coupling        | Adds modest pressure-dependent calibre within the calibrated CPP range without creating a second passive tail beyond the active limits. | Not a measured pressure–area curve; the CPP clamp is a structural model choice. |
 | **Diameter clamp 0.60–1.45**          | Numerical safeguard                      | Prevents D⁴ from producing implausible singular resistance.                    | Clipping can dominate extreme slider combinations.                 |
 
 ## A4. Autoregulation and PaCO₂
 |                                 |                                 |                                                                                           |                                                                      |
 |---------------------------------|---------------------------------|-------------------------------------------------------------------------------------------|----------------------------------------------------------------------|
 | **Implementation**              | **Status**                      | **Why chosen / link to physiology**                                                       | **Limit or sensitivity**                                             |
-| **CPP points 50/80/140**        | Literature-informed calibration | Maps to the familiar 60/90/150 MAP reference at ICP 10 [1–3].                           | Individual limits and plateau slope vary.                            |
-| **CBF 47.5/50/52.5**            | WillisWorks calibration         | Defines ±5% operational knees while retaining a gentle plateau slope.                     | Not a biological threshold or confidence interval.                   |
+| **CPP points 50/80/140**        | Literature-informed calibration | Define the fixed grey 60/90/150 MAP reference at ICP 10 [1–3].                           | They are reference anchors, not imposed territorial limits; individual limits and plateau slope vary. |
+| **CBF 47.5/50/52.5**            | WillisWorks calibration         | Defines the gently sloped fixed reference across its lower, preferred and upper points.   | Not a biological threshold or confidence interval.                   |
+| **Territorial knees from Rmin/Rmax** | Mechanistic model rule       | Pressure-passive limbs emerge when the resistance required for target flow exceeds the available active range. | Knee position depends on pressure loss, collateral support, PaCO₂, compliance, metabolism and calibration. |
 | **Hypertension CPP 70/100/165** | Literature-informed calibration | Represents a right-shifted operating range described in severe hypertension [4].        | Not a universal chronic-hypertension profile.                        |
 | **Impaired efficiency 0.28**    | Teaching calibration            | Produces a visibly pressure-passive but not completely unregulated curve.                 | No direct clinical conversion.                                       |
 | **Preferred OEF 0.40**          | Literature-informed abstraction | Links demand and content to flow through Fick balance [9–12].                           | Regional OEF varies.                                                 |
-| **Target-flow clamp 35–95**     | Numerical/teaching bound        | Prevents unlimited metabolic flow request while allowing strong NVC/hypoxic compensation. | Current code uses 95;                  |
+| **Target-flow clamp 35–95**     | Numerical/teaching bound        | Prevents unlimited metabolic flow request while allowing strong NVC/hypoxic compensation. | The upper bound is a model safeguard rather than a physiological maximum. |
 | **CO₂ midpoint 38, slope 6**    | Literature-informed calibration | Produces a human-like sigmoid with bounded hypocapnic and hypercapnic limbs [6–8].      | Not fit to a specific subject or gas-delivery protocol.              |
-| **Raw CO₂ range 0.55–1.45**     | WillisWorks calibration         | Allows substantial constriction/dilation while remaining bounded.                         | Absolute CVR depends on endothelial, stiffness and reserve settings. |
+| **Raw CO₂ range 0.55–1.45**     | WillisWorks calibration         | Scales acute target flow and shifts the usable resistance bounds so pressure limits can move during challenge. | Absolute CVR and knee position depend on endothelial function, stiffness, reserve and network state. |
 
 ## A5. Compliance and source-flow reserve
 |                                           |                                                  |                                                                                               |                                                               |
@@ -958,7 +990,7 @@ _Startup settings in the v21j code. Percentages are relative model scales unless
 | **Autoregulation**         | Normal profile; MAP 45→165 mmHg.                                                 |
 | **Stenosis**               | Left M1; collateral adaptation 65%; endpoint 98%.                                |
 | **Oxygen**                 | Normal; anaemia target Hb 8 g/dL; hypoxaemia target SaO₂ 80%; demand target 4.0. |
-| **Dynamics**               | Autoregulation view; metric selected independently.                              |
+| **Dynamics**               | Autoregulation view by default; selecting the pressure/autoregulation simulation opens this view automatically, after which view and metric remain user selectable. |
 
 # Appendix C: Glossary
 
