@@ -15,6 +15,9 @@ license: "GPL-3.0-or-later"
 
 ![logo.](img/logo.png)
 
+## Please let me know if there are issues or suggestions for improvement - via the issues tab or email @ a.bhogal (at) umcutrecht.nl
+
+
 ## Simply download the WillisWorks.html file and open it in any broswer - or launch using the button below
 
 [![Launch WillisWorks](https://img.shields.io/badge/Launch-WillisWorks-16856d?style=for-the-badge)](https://abhogal-lab.github.io/WillisWorks/index.html)
