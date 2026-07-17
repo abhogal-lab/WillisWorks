@@ -15,7 +15,7 @@ license: "GPL-3.0-or-later"
 
 ![logo.](img/logo.png)
 
-## Simply download the WillisWorks.html file and open it in any broswer
+## Simply download the WillisWorks.html file and open it in any broswer - or launch using the bottom below
 
 [![Launch WillisWorks](https://img.shields.io/badge/Launch-WillisWorks-16856d?style=for-the-badge)](https://abhogal-lab.github.io/WillisWorks/index.html)
 
