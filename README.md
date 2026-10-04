@@ -1,7 +1,7 @@
 ---
 title: "WillisWorks User and Physiological Model Manual"
-version: "1.0"
-date: "July 2026"
+version: "1.5"
+date: "October 2026"
 authors:
   - "Alex A. Bhogal"
   - "Markus Fahlström"
@@ -26,7 +26,7 @@ license: "GPL-3.0-or-later"
 
 ## User and Physiological Model Manual
 
-**Version 1.0 · July 2026**  
+**Version 1.5 · October 2026**  
 Interactive cerebral hemodynamics teaching simulator  
 Software conceptualized by **Alex A. Bhogal** and **Markus Fahlström** with some help from our intern **openAI**
 
@@ -76,7 +76,7 @@ brain masks retain lossless PNG. Both HTML entry points remain self-contained.
 
 ## How to use this manual
 This document is both a user guide and a model specification. It follows
-the equations and constants implemented in WillisWorks v1.0. The goal
+the equations and constants implemented in WillisWorks v1.5. The goal
 is to let a reader understand what each control changes, why an output
 moves, and which parts of that response are established physiology
 versus educational calibration.
