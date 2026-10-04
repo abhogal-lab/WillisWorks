@@ -36,6 +36,44 @@ WillisWorks is a transparent conceptual laboratory for exploring how arterial an
 
 **WillisWorks is a work in progress. Parameters may still be optimized and outputs should not be considered as accurate representations of physiology. This is intended as a conceptual tool only**
 
+## Source, build and checks
+
+The editable application lives in `src/`: HTML template, shared CSS,
+six JavaScript modules and local image assets. The numerical model is in
+`src/model.js`; UI rendering, simulations and exports have separate modules.
+Build outputs `index.html` and `WillisWorks.html` are identical standalone,
+offline files. Edit the source files, then rebuild; direct edits to generated
+HTML will be overwritten. No packages or external runtime assets are required.
+
+```sh
+npm run build
+npm test
+```
+
+Node 18+ is sufficient for building and model tests. The optional
+`scripts/browser-qa.cjs` uses Node 22+ and an isolated local Chrome debugging
+session on port 9337; it verifies desktop/mobile rendering, both metabolic
+models, CO₂ curves, bidirectional collateral animation and image assets.
+It writes screenshots and its report to `artifacts/`.
+
+The source-pressure solver uses bounded Newton steps with backtracking and a
+bracketed coordinate fallback, checks a 10⁻⁵ mmHg residual, and exports its
+convergence diagnostics. Arteriolar iterations require two consecutive
+resistance changes below 10⁻⁵, with a 256-iteration safety limit. Tissue
+outflows close when distal pressure is below local outflow pressure, preventing
+reverse injection from a tissue sink. A visible status message flags failed
+convergence or flow-balance checks instead of silently presenting a stable result.
+
+Manual edits pause progression and retain the displayed disease, additional
+tandem lesions and autoregulatory profile. A note exposes retained lesions and
+provides a clear action. Presets restore a full, reproducible parameter set.
+Snapshots/CSV/JSON use the displayed effective CO₂ and state; JSON schema 2
+adds diagnostics and explicit current/reference reserve fields. PNG exports
+preserve the visible SVG styles.
+
+The five anatomical reference images use WebP at their original resolution;
+brain masks retain lossless PNG. Both HTML entry points remain self-contained.
+
 ## How to use this manual
 This document is both a user guide and a model specification. It follows
 the equations and constants implemented in WillisWorks v1.0. The goal
@@ -48,9 +86,10 @@ versus educational calibration.
 ### Model description
 The numerical model contains eight tissue beds: bilateral ACA, MCA, PCA
 and vertebrobasilar (VB) territories. The brain image paints six
-cortical territories; L VB and R VB are present in the Model, Staging,
-Dynamics, timelines, comparison tables and exports but are not painted
-on the brain panel.
+cortical territories. The Model panel combines L VB and R VB into one
+full-width row and shows their individual values when they differ. Staging,
+Dynamics, timelines, comparison tables and exports retain the two distinct
+VB beds. Neither VB bed is painted on the brain panel.
 
 ## Contents
 
@@ -167,7 +206,7 @@ state; switching modes does not reset the model.
 |----------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------|
 | **Control**                      | **Scope**                                                                                                                                         |
 | **Restore defaults**             | Restores the full startup state, including advanced physiology and all simulations. The selected interface view and Dynamics metric are retained. |
-| **Challenge and anatomy: Reset** | Restores PaCO₂ to 38 mmHg, ACom to 50%, and both PCom capacities to 35%. It does not remove lesions or reset the rest of the model.               |
+| **Challenge and anatomy: Reset** | Restores PaCO₂ to 38 mmHg, ACom to 90%, and both PCom capacities to 85%. It does not remove lesions or reset the rest of the model.               |
 | **Simulation Reset**             | Returns the selected simulation to its start state while retaining the configured simulation type and settings.                                   |
 | **Simulation Off**               | Removes simulation-specific modifiers and returns to the saved static base state.                                                                 |
 
@@ -254,21 +293,41 @@ CPPt = Pdistal,t − Pout,t
 ```
 
 ## Stenosis and near-occlusion
-Stenosis severity is translated into a viscous resistance term plus a
-bounded inertial/jet-loss term. The relation becomes steep near 95–100%
-so that near-occlusion is possible without numerically disconnecting a
-node.
-
-**Implemented lesion mapping**
+The slider specifies focal **diameter reduction**, with area reduction calculated
+from the square of the remaining diameter. Added resistance is small for mild
+narrowing and rises steeply for severe narrowing. The lesion is represented by
+a short-segment viscous term plus a separation-loss term linearized at a
+reference flow:
 
 ```text
-Rviscous = 3.2s², s < 0.95
-Rviscous = 3.2(0.95)² + 220[(s−0.95)/0.05]³, s ≥ 0.95
-Rjet = min{85, 0.055s² / max(1−s,0.025)²}
-Rlesion = Rviscous + Rjet
+s = percent diameter narrowing / 100
+d = max(1 − s, 0.025)
+a = d²
+Rviscous = 0.0004 · (d⁻⁴ − 1)
+Rseparation = 0.0004 · [(1 − a) / a]²
+Rlesion = Rviscous + Rseparation
 ```
 
-> **Important assumption** This is not a clinical conversion from angiographic percent stenosis to pressure loss. Real pressure loss depends on lumen geometry, length, eccentricity, flow rate, separation, collateral demand and rheology.
+The coefficients are educational calibrations for a focal lesion, not fitted
+patient measurements. The 2.5% residual-diameter floor makes the 100% endpoint
+**near-occlusion**, not complete disconnection. By contrast, an absent ACom or
+PCom is exactly disconnected.
+
+At MAP 90, ICP 10, PaCO₂ 38, default CoW capacities, no leptos or bypass, and
+normal autoregulation, a unilateral ICA lesion leaves approximately 99%, 97%,
+77% and 57% of the reference dilatory span at 32%, 50%, 70% and 75% narrowing
+in the ipsilateral MCA bed. Reserve falls below 1% near 83% ICA narrowing or
+81% isolated M1 narrowing. These are reproducible model outputs, not clinical
+cutoffs. The previous mapping exhausted this reserve near 30% ICA narrowing
+and has been replaced.
+
+Clinical measurements associate severe stenosis with reduced reactivity
+([Puz et al., 2016](https://pubmed.ncbi.nlm.nih.gov/27591061/)), but stenosis
+grade alone does not determine reserve: a study of 171 patients found that
+many severe lesions retained CVR ([clinical imaging study, 2015](https://pmc.ncbi.nlm.nih.gov/articles/PMC4630061/)).
+Collaterals, perfusion pressure, tandem lesions, lesion geometry, metabolic
+demand and vascular reactivity all matter. The displayed resistance headroom
+is also different from measured percentage CBF augmentation during a CVR test.
 
 # 5. Autoregulation, PaCO₂ and compliance
 
@@ -358,8 +417,11 @@ Hypercapnia raises the acute flow target, shifts the attainable maximum
 resistance toward Rmin and weakens constrictor-side controller gain.
 This allows the upper pressure limit to move or become more
 pressure-passive instead of remaining fixed near MAP 150 mmHg.
-Hypocapnia lowers the acute flow target and shifts the attainable minimum
-resistance toward Rmax. In a pressure-limited bed that is already near
+Hypocapnia lowers the acute flow target and increases arteriolar tone.
+The structural minimum resistance remains accessible to pressure regulation;
+the lower flow target can therefore be maintained at a lower perfusion pressure.
+The upper knee also changes when the remaining constrictor headroom is used.
+These static curve shifts are model predictions, not a fitted clinical CO₂–pressure law. In a pressure-limited bed that is already near
 its dilatory limit, stronger donor-bed dilation and finite source reserve
 may produce steal [8].
 
@@ -375,7 +437,7 @@ may produce steal [8].
 
 # 6. Finite source reserve, proximal resistance and steal
 
-_Steal becomes prominent when additional vasodilatory demand approaches the flow reserve of the supplying ICA or basilar source._
+_Steal becomes prominent when donor vasodilation reduces pressure across functioning collateral routes; finite feeder reserve can amplify the loss._
 
 ![Figure 4. A vasoactive stimulus leads to vascular steal in the left territories due exhausted reserve and competition for limited inflow supply.](img/figure4.gif)
 
@@ -426,6 +488,18 @@ collateral route, and shares a source whose acute reserve is being used.
 A complete occlusion is not necessarily the strongest steal state: some
 resting collateral flow must remain available to be redistributed.
 
+The complete-circle teaching defaults now set ACom capacity to 90% and both
+PCom capacities to 85%. This makes resting cross-feed and its loss under a
+strong CO₂ challenge visible in severe ICA disease. The **ICA collateral
+steal** preset uses 85% left ICA narrowing, PaCO₂ 65 mmHg and slightly more
+open communicating routes. In the default model, its left MCA flow falls
+from about 47 to 33 mL/100 g/min while right MCA flow rises from 50 to 72;
+left PCom support and basilar contribution to left MCA both decline. These
+are intentionally illustrative outputs, not patient-specific predictions.
+In an [ASL challenge study of symptomatic ICA disease](https://pubmed.ncbi.nlm.nih.gov/30389512/),
+steal was observed in 8 of 38 patients; its presence and extent varied with
+collateral status. The preset is not fitted to those patient measurements.
+
 > **MRI caution** Negative BOLD CVR is not identical to true CBF steal, and single-delay ASL can underestimate flow when arterial transit time changes. Compare the model primarily with quantitative, delay-aware flow measurements when possible.
 
 # 7. Circle of Willis, leptomeningeal pathways and bypass
@@ -462,20 +536,20 @@ Edge factors: ACA–MCA 1.00; MCA–PCA 1.10; ACA–PCA 2.50; trans-ACA
 1.35
 ```
 
-## Fixed acute conductance and the 65/35 split
+## Fixed acute conductance and the 35/65 split
 In an acute PaCO₂ challenge, a vessel recruited at rest should not
 disappear instantly because the pressure gradient changes. The model
-therefore retains 65% of established resting pial flow and lets 35%
-remain pressure responsive. This avoids counting donor competition twice
-while still allowing collateral flow to weaken or reverse.
+therefore retains 35% of established resting pial flow and lets 65%
+respond to the current pressure gradient. This leaves resting support
+unchanged while making pressure-driven collateral loss more visible.
 
 **Acute pial flow**
 
 ```text
-Qpial,acute = 0.65Qpial,rest + 0.35 · kΔPacute/Rpial
+Qpial,acute = 0.35Qpial,rest + 0.65 · kΔPacute/Rpial
 ```
 
-> **Teaching calibration** The 3.5-mmHg onset, 12-mmHg recruitment span, edge weights and 65/35 split were selected for stable, interpretable rescue and redistribution. They are not universal human thresholds.
+> **Teaching calibration** The 3.5-mmHg onset, 12-mmHg recruitment span, edge weights and 35/65 split were selected for stable, interpretable rescue and redistribution. They are not universal human thresholds.
 
 ## EC–IC bypass
 Bypass adds an external distal pressure source, strongest to the MCA bed
@@ -608,19 +682,53 @@ remaining a simplified abstraction of the neurovascular unit [21].
 _Begin with continuous pressure, flow and reserve; use categorical labels as summaries rather than as endpoints._
 
 ## Territory model
-Each of the eight territory rows reports CBF, OEF, delivered CMRO₂, a
-state badge, intrinsic and available reserve, source composition and
-small CBF/OEF/CMRO₂ histories. The wide CBF bar provides a rapid visual
-comparison. Intrinsic reserve uses a violet palette; available reserve
-uses green. Hyperemia is shown in green, whereas metabolic failure
-remains red.
+The Model panel shows three left cortical beds, three right cortical beds and
+one full-width vertebrobasilar (VB) row. That row reports the mean of its two
+modelled VB beds. If their flows or reserve gauges differ, it shows both
+separately beneath the mean. The Staging and Dynamics views and CSV/JSON
+exports retain the two distinct VB beds.
 
-## Intrinsic versus available reserve
-Intrinsic reserve measures unused vasodilatory range in the territorial
-bed. Available reserve additionally reflects current support from
-communicating, pial, bypass and ECA pathways. A collateralized bed can
-therefore maintain adequate supported perfusion while remaining
-intrinsically exhausted and donor dependent.
+Each row reports CBF, OEF, delivered CMRO₂, a state badge, reserve gauge,
+source composition and CBF/OEF/CMRO₂ histories. The two bars share a fixed
+**four-section gauge**, with a tick every 25%:
+
+- **At CO₂ 38** (violet): the same network at the fixed eucapnic reference.
+- **Current intrinsic** (green plus cyan): a view of the current arteriolar
+  resistance headroom. Cyan hatching shows the extra gauge capacity above
+  the CO₂ 38 reference during hypocapnia.
+
+The numerical model keeps the actual resistance headroom, normalized to one
+calibrated eucapnic resistance span. The display maps that reference to three
+of four sections and permits at most one additional section for hypocapnia:
+
+```text
+Raw headroom = max(0, Rcurrent − Rminimum) / (Rreference − Rminimum,calibrated)
+Reference gauge = clamp(0.75 · raw headroom at CO₂ 38, 0, 0.75)
+Current gauge = clamp(0.75 · current raw headroom, 0, min(1, reference gauge + 0.25))
+Cyan gain = max(0, current gauge − reference gauge)
+```
+
+The healthy CO₂ 38 gauge is therefore about 75%; lowering PaCO₂ can bring it
+to 100%, while raising PaCO₂ can reduce it. The gauge is a bounded teaching
+display, not a direct percent measurement of clinical CVR. Raw headroom can
+exceed 100% and remains in the per-bed JSON and CSV output. The capacity
+control changes the actual lower resistance limit, and categorical staging
+uses the raw headroom and flow rather than the bounded gauge.
+
+Hypocapnic constriction can increase intrinsic dilatory headroom while lowering
+flow and raising extraction, even into a model hypoperfusion/failure category.
+Headroom does not imply adequate oxygen delivery. The violet reference remains
+fixed when only PaCO₂ changes; it is not labelled as the current resting state.
+Collaterals and bypass can change this intrinsic headroom through their effect
+on pressure and the resistance the bed needs. Source fractions describe support
+separately; there is no additional calculated “supported reserve” bar.
+
+Source fractions trace the actual solved, signed flows through the network.
+At each node, each source fraction is the incoming-flow-weighted mixture of
+upstream fractions. External bypass and ECA injections enter exactly once in
+the fourth source category. Fractions sum to 100% for supplied beds; unsupplied
+beds have zero fractions. This replaces source-pressure superposition, which
+was invalid for the nonlinear and fixed-transfer model components.
 
 ## Staging rules
 |                               |                                                 |                                                                      |
@@ -640,13 +748,18 @@ PET diagnostic cutoffs.
 **Stages are representative and are meant for teaching/visualization purposes only**
 
 ## Dynamics
-Dynamics is normally independent of the active simulation. The View
+The pressure–flow view samples the **live network**, preserving lesions,
+retained simulation lesions, Suzuki disease, bypass, autoregulatory profile
+and the currently transmitted PaCO₂. Its current-MAP point exactly matches
+the current result. Faint dashed coloured curves show the same network at
+PaCO₂ 38 when a CO₂ challenge is active; grey shows the fixed healthy reference.
+Other progression views sample a trajectory from its captured baseline. The View
 dropdown selects Autoregulation curve, Suzuki progression,
 Steno-occlusive progression or Oxygen delivery. Selecting the Blood
 pressure & autoregulation simulation automatically opens the Dynamics
 panel with the Autoregulation curve as the initial view; the user can
 subsequently select another view. The Metric dropdown retains CBF, OEF,
-CMRO₂, intrinsic/available reserve, distal pressure, mitochondrial PO₂
+CMRO₂, reserve at CO₂ 38/current intrinsic reserve, distal pressure, mitochondrial PO₂
 proxy. Full curves use 43 samples and include the exact current operating
 point; a 17-point preview is used while dragging.
 
@@ -705,7 +818,7 @@ effects; it isolates cerebral oxygen-content mechanisms [9].
 |                                 |                                                          |                                                                    |
 |---------------------------------|----------------------------------------------------------|--------------------------------------------------------------------|
 | **Simulation**                  | **Primary controls**                                     | **Best metric to watch**                                           |
-| **Suzuki progression**          | Left/right grade trajectory, duration, EC–IC conversion. | Intrinsic vs available reserve; source fractions; distal pressure. |
+| **Suzuki progression**          | Left/right grade trajectory, duration, EC–IC conversion. | Current reserve vs CO₂ 38 reference; source fractions; distal pressure. |
 | **Pressure & autoregulation**   | Profile, start/end MAP, compliance.                      | CBF and distal pressure; compare falling vs rising sweeps.         |
 | **Steno-occlusive progression** | Side, M1/ICA/tandem, adaptation, duration.               | Reserve before CBF; donor-recipient asymmetry.                     |
 | **Oxygen delivery**             | Anaemia, hypoxaemia or demand; metabolic model.          | CaO₂, OEF, delivered CMRO₂ and mito-PO₂ proxy.                     |
@@ -851,9 +964,9 @@ universally normal.
 |                                       |                                          |                                                                                |                                                                    |
 |---------------------------------------|------------------------------------------|--------------------------------------------------------------------------------|--------------------------------------------------------------------|
 | **Implementation**                    | **Status**                               | **Why chosen / link to physiology**                                            | **Limit or sensitivity**                                           |
-| **3.2s² stenosis term**               | Heuristic                                | Provides gradual resistance growth at moderate severity.                       | Not Poiseuille flow through the measured residual lumen.           |
-| **Cubic rise above 95%**              | Numerical/teaching calibration           | Creates a transition to near-occlusion without singular disconnection.         | Results near 95–100% are highly sensitive to lesion mapping.       |
-| **Jet term with cap 85**              | Reduced-order heuristic                  | Adds flow-separation/inertial loss and prevents overflow.                      | No lesion length, eccentricity or Reynolds-number calculation.     |
+| **Focal diameter lesion law** | Teaching calibration | Uses remaining diameter to the fourth power and squared relative area loss, with coefficients 0.0004 each. | Coefficients represent a short focal lesion at reference flow; not a patient-specific stenosis-to-pressure conversion. |
+| **Residual diameter floor 2.5%** | Numerical regularization | Keeps the near-occlusion endpoint finite. | 100% on the slider is not exact arterial disconnection. |
+| **Separation loss at reference flow** | Reduced-order heuristic | Adds a sharp increase as residual area shrinks. | Linearized loss; no beat-resolved inertial or turbulence calculation. |
 | **R∝μL/D⁴**                           | Established relation used as abstraction | Preserves the dominant geometry dependence of laminar tube flow.               | Cerebral networks are branching, compliant and nonuniform.         |
 | **38-μm representative microvessel**  | Teaching calibration                     | Places the apparent-viscosity function in a small-vessel regime [16].        | One diameter cannot represent arterioles, capillaries and venules. |
 | **Pressure strain coefficient 0.035** | Heuristic wall-mechanics coupling        | Adds modest pressure-dependent calibre within the calibrated CPP range without creating a second passive tail beyond the active limits. | Not a measured pressure–area curve; the CPP clamp is a structural model choice. |
@@ -890,11 +1003,11 @@ universally normal.
 |                                             |                               |                                                                                             |                                                               |
 |---------------------------------------------|-------------------------------|---------------------------------------------------------------------------------------------|---------------------------------------------------------------|
 | **Implementation**                          | **Status**                    | **Why chosen / link to physiology**                                                         | **Limit or sensitivity**                                      |
-| **ACom 50%; PCom 35% defaults**             | Teaching anatomy defaults     | Allow low resting cross-flow but useful recruitment during asymmetry.                       | Not prevalence- or diameter-based.                            |
+| **ACom 90%; PCom 85% defaults**             | Teaching anatomy defaults     | Make collateral support and its loss during severe-disease challenge visible.                       | Deliberately patent teaching configuration, not population anatomy.                            |
 | **R=0.16+20(1−c)²**                         | Heuristic conductance mapping | Gives high sensitivity near low capacity and finite resistance at 100%.                     | Slider percentage is functional capacity, not lumen diameter. |
 | **Pial onset 3.5 mmHg; span 12 mmHg**       | Teaching recruitment rule     | Makes secondary collateral recruitment depend on a meaningful pressure gradient [22,23].  | No universal human pressure threshold exists.                 |
 | **Pial edge factors 1/1.1/2.5/1.35**        | Anatomical teaching weights   | ACA–PCA is made weaker/longer; trans-ACA differs from same-side links.                      | Not measured path lengths or conductances.                    |
-| **65% committed, 35% responsive**           | WillisWorks acute calibration | Keeps established collateral support protective while permitting pressure-dependent change. | Key assumption; different split changes challenge steal.      |
+| **35% committed, 65% responsive**           | WillisWorks acute calibration | Preserves resting collateral support while emphasizing pressure-dependent change. | Key assumption; different split changes challenge steal.      |
 | **No pial or bypass input to VB**           | Structural choice             | Avoids assigning cortical surface collateral anatomy to posterior-fossa beds.               | Posterior-fossa collaterals are underrepresented.             |
 | **Bypass MCA/ACA/PCA weights .34/.94/1.02** | Teaching distribution         | Makes distal MCA support dominant while allowing weaker ipsilateral spread.                 | Not graft diameter, measured flow or anastomotic location.    |
 | **Bypass pressure ≈MAP−2**                  | Teaching pressure source      | Represents a high-pressure external supply without exceeding systemic MAP.                  | No donor ECA limitation or hyperperfusion syndrome model.     |
@@ -931,17 +1044,17 @@ universally normal.
 | **Playback 12/24/40 s**                       | Interface choice                         | Supports teaching and observation.                                                             | No biological time meaning.                        |
 | **43-point full /17-point preview curves**    | Performance choice                       | Maintains smooth final curves and responsive interaction.                                      | Preview is temporarily lower resolution.           |
 | **Six painted / eight numerical territories** | Visualization compromise                 | Preserves established brain graphic while retaining VB physiology numerically.                 | VB changes are not visible on the brain map.       |
-| **Source fractions by superposition**         | Explanatory calculation                  | Shows relative source support in the fixed-resistance solved state.                            | Not a tracer-validated flow territory measurement. |
+| **Source fractions by flow tracing** | Explanatory calculation | Conserves source identity through the actual solved directed flows, including external support. | Not a tracer-validated flow territory measurement. |
 
 # Appendix B: Default values and ranges
 
-_Startup settings in the v21j code. Percentages are relative model scales unless otherwise stated._
+_Startup settings in the current source. Percentages are relative model scales unless otherwise stated._
 
 ## B1. Core and Advanced model
 |                                 |             |                     |                  |
 |---------------------------------|-------------|---------------------|------------------|
 | **Parameter**                   | **Default** | **Range / choices** | **Unit or note** |
-| **MAP**                         | 90          | 45–180              | mmHg             |
+| **MAP**                         | 90          | 35–200              | mmHg             |
 | **ICP**                         | 10          | 2–35                | mmHg             |
 | **CVP**                         | 5           | 0–25                | mmHg             |
 | **Lateral ICP gradient**        | 0           | −10 to +10          | mmHg             |
@@ -954,8 +1067,8 @@ _Startup settings in the v21j code. Percentages are relative model scales unless
 | **Haematocrit**                 | 42          | 20–60               | %                |
 | **Diameter scale**              | 100         | 75–125              | %                |
 | **Path-length scale**           | 100         | 75–150              | %                |
-| **CMRO₂ demand**                | 4.0         | 2.0–5.5             | mL O₂/100 g/min  |
-| **Arterial O₂ content**         | 0.20        | 0.08–0.24           | mL O₂/mL blood   |
+| **CMRO₂ demand**                | 4.0         | 2.0–7.0             | mL O₂/100 g/min  |
+| **Arterial O₂ content**         | 0.20        | 0.03–0.30           | mL O₂/mL blood   |
 | **OEF ceiling**                 | 0.85        | 0.60–0.95           | fraction         |
 | **Diffusivity reserve**         | 50          | 0–150               | %                |
 | **CTH**                         | 100         | 50–250              | %                |
@@ -969,9 +1082,9 @@ _Startup settings in the v21j code. Percentages are relative model scales unless
 |-----------------------------|-------------|-----------------------------------------------------------------------------------|
 | **Parameter**               | **Default** | **Range / choices**                                                               |
 | **Primary / second lesion** | None        | None; L/R ICA, M1, A1, P1; basilar                                                |
-| **Severity**                | 0           | 0–100%                                                                            |
-| **ACom capacity**           | 50%         | 0–100%                                                                            |
-| **Left / right PCom**       | 35% / 35%   | 0–100%                                                                            |
+| **Diameter narrowing** | 0 | 0–100%; 100% represents near-occlusion |
+| **ACom capacity**           | 90%         | 0–100%                                                                            |
+| **Left / right PCom**       | 85% / 85%   | 0–100%                                                                            |
 | **CoW variant**             | Complete    | Absent ACom; L/R A1 hypoplasia; absent L/R PCom; fetal L/R PCA; reduced VB inflow |
 | **Leptos**                  | Off         | Off/on                                                                            |
 | **Lepto pattern**           | Ipsilateral | Ipsilateral ACA–MCA–PCA; transhemispheric ACA bridge                              |
@@ -999,7 +1112,7 @@ _Definitions as used in WillisWorks._
 |                             |                                                                                                                                     |
 |-----------------------------|-------------------------------------------------------------------------------------------------------------------------------------|
 | **Term**                    | **Definition**                                                                                                                      |
-| **Available reserve**       | Reserve after considering current external or collateral support; differs from intrinsic arteriolar capacity.                       |
+| **Reserve at CO₂ 38** | Intrinsic resistance headroom in the same network at the explicitly fixed eucapnic reference. |
 | **CaO₂**                    | Arterial oxygen content.                                                                                                            |
 | **CBF**                     | Cerebral blood flow, displayed in mL/100 g/min.                                                                                     |
 | **Compliance**              | Relative vascular volume-storage and pulse-damping parameter.                                                                       |
