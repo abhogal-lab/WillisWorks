@@ -41,9 +41,11 @@ WillisWorks is a transparent conceptual laboratory for exploring how arterial an
 The editable application lives in `src/`: HTML template, shared CSS,
 six JavaScript modules and local image assets. The numerical model is in
 `src/model.js`; UI rendering, simulations and exports have separate modules.
-Build outputs `index.html` and `WillisWorks.html` are identical standalone,
-offline files. Edit the source files, then rebuild; direct edits to generated
-HTML will be overwritten. No packages or external runtime assets are required.
+Build outputs `docs/index.html` for GitHub Pages, `WillisWorks.html` for
+download, and a root `index.html` for local preview. All three are identical
+standalone, offline files. Edit the source files, then rebuild; direct edits
+to generated HTML will be overwritten. No packages or external runtime assets
+are required.
 
 ```sh
 npm run build
